@@ -87,7 +87,16 @@
   }
   .download:hover { filter: brightness(1.08); }
   .download:active { transform: scale(0.98); }
-  .download svg { width: 20px; height: 20px; }
+  .download svg { width: 20px; height: 20px; flex: none; }
+  .downloads { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .download span { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2; }
+  .download small { font-size: 13px; font-weight: 500; opacity: .85; }
+  .download.secondary {
+    background: transparent; color: var(--accent);
+    box-shadow: inset 0 0 0 1.5px var(--accent);
+  }
+  .download.secondary:hover { filter: none; background: var(--hero-glow); }
+  .download[hidden] { display: none; }
   .meta { color: var(--muted); font-size: 14px; margin-top: 14px; }
   .meta a { color: var(--muted); }
 
@@ -160,12 +169,19 @@
     <img src="icon.png" alt="SiriMouse app icon" width="168" height="168">
     <h1>SiriMouse</h1>
     <p class="lede">Turn your old Apple TV Siri Remote into a presentation clicker, a mouse and a media remote for your Mac.</p>
-    <a class="download" id="download" href="https://github.com/SmugZombie/SiriMouse/releases/latest">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-      <span id="download-label">Download for Mac</span>
-    </a>
+    <div class="downloads">
+      <a class="download" id="download" href="https://github.com/SmugZombie/SiriMouse/releases/latest">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        <span><span id="download-label">Download for Mac</span><small>Apple silicon &amp; Intel</small></span>
+      </a>
+      <a class="download secondary" id="download-arm64" href="https://github.com/SmugZombie/SiriMouse/releases/latest" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        <span>Apple silicon only<small>Smaller download</small></span>
+      </a>
+    </div>
     <div class="meta">
-      <span id="version">Latest release</span> · Free · macOS 13 or later · Apple silicon &amp; Intel · Notarized by Apple
+      <span id="version">Latest release</span> · Free · macOS 13 or later · Notarized by Apple
+      <br>Not sure? The first button works on every Mac.
       <br><a href="https://github.com/SmugZombie/SiriMouse/releases">All releases</a> · <a href="https://github.com/SmugZombie/SiriMouse">Source on GitHub</a>
     </div>
   </div>
@@ -308,17 +324,22 @@
 </footer>
 
 <script>
-  // Point the button straight at the newest zip. Without this (offline, rate limited),
-  // it still links to the latest release page.
+  // Point the buttons straight at the newest zips. Without this (offline, rate limited),
+  // the main button still links to the latest release page.
   fetch("https://api.github.com/repos/SmugZombie/SiriMouse/releases/latest")
     .then(function (response) { return response.ok ? response.json() : Promise.reject(response.status); })
     .then(function (release) {
-      // The universal zip runs on every Mac; skip the Apple silicon-only one.
-      var zip = (release.assets || []).find(function (asset) {
-        return /\.zip$/i.test(asset.name) && !/-arm64\.zip$/i.test(asset.name);
-      });
+      var assets = release.assets || [];
+      var arm64 = assets.find(function (asset) { return /-arm64\.zip$/i.test(asset.name); });
+      // The universal zip runs on every Mac.
+      var zip = assets.find(function (asset) { return /\.zip$/i.test(asset.name) && asset !== arm64; });
       var version = (release.tag_name || "").replace(/^v/, "");
       if (zip) document.getElementById("download").href = zip.browser_download_url;
+      if (arm64) {
+        var button = document.getElementById("download-arm64");
+        button.href = arm64.browser_download_url;
+        button.hidden = false;
+      }
       if (version) {
         document.getElementById("download-label").textContent = "Download SiriMouse " + version;
         document.getElementById("version").textContent = "Version " + version;
