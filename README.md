@@ -3,6 +3,11 @@
 A native macOS menu bar app that turns a **1st-generation Siri Remote** (2015, black glass touch
 surface) into a presenter clicker, a media remote and a mouse.
 
+## Download
+
+Grab `SiriMouse-x.y.z.zip` from [Releases](https://github.com/SmugZombie/SiriMouse/releases),
+unzip it and move **SiriMouse.app** to /Applications. Releases are signed and notarized.
+
 ## Pair the remote with your Mac
 
 1. If it is paired with an Apple TV, unpair it there first (or keep that Apple TV powered off).
@@ -17,6 +22,8 @@ Requires macOS 13+ and the Xcode command line tools (`swift`).
 ```sh
 ./build.sh --run            # build into ./build and launch
 ./build.sh --install --run  # copy to /Applications first (needed for Launch at Login)
+./release.sh 1.0.0          # notarize and publish a GitHub release (needs a Developer ID
+                            # certificate and `xcrun notarytool store-credentials notary`)
 ```
 
 On first launch, grant **Input Monitoring** (to read the remote) and **Accessibility** (to send

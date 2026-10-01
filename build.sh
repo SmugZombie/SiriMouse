@@ -17,7 +17,13 @@ cp Resources/Info.plist "$APP/Contents/Info.plist"
 # Sign with a stable identity when one exists: macOS ties Accessibility and Input Monitoring
 # grants to the signature, so ad-hoc signing means re-granting them after every rebuild.
 IDENTITY="${SIGN_IDENTITY:-$(security find-identity -v -p codesigning | awk -F'"' '/Apple Development|Developer ID Application/ {print $2; exit}')}"
-codesign --force --sign "${IDENTITY:--}" "$APP"
+if [[ -n "$IDENTITY" ]]; then
+  # Hardened runtime and a secure timestamp are required for notarization.
+  codesign --force --options runtime --timestamp \
+    --entitlements Resources/SiriMouse.entitlements --sign "$IDENTITY" "$APP"
+else
+  codesign --force --sign - "$APP"
+fi
 echo "Signed with: ${IDENTITY:-ad-hoc}"
 
 if [[ " $* " == *" --install "* ]]; then
