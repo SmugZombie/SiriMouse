@@ -76,3 +76,7 @@ Bluetooth packets with root privileges), so the **Siri button uses the Mac's mic
   Turn on **Verbose Logging** to see every button and gesture.
 
 Touch-surface and HID usage details come from [VibeRemote](https://github.com/mengdream/VibeRemote) (MIT).
+
+## License
+
+MIT, see [LICENSE](LICENSE). Third-party code is listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
