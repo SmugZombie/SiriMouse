@@ -106,7 +106,7 @@ final class ActionEngine {
         if pressed {
             longPressFired.remove(button)
             longPressTimers[button]?.invalidate()
-            longPressTimers[button] = Timer.scheduledTimer(withTimeInterval: 0.7, repeats: false) { [weak self] _ in
+            longPressTimers[button] = Timer.onMainCommon(withTimeInterval: 0.7, repeats: false) { [weak self] _ in
                 self?.longPressFired.insert(button)
                 long()
             }
@@ -122,9 +122,9 @@ final class ActionEngine {
         repeatTimer = nil
         guard pressed else { return }
         action()
-        repeatTimer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: false) { [weak self] _ in
+        repeatTimer = Timer.onMainCommon(withTimeInterval: 0.4, repeats: false) { [weak self] _ in
             action()
-            self?.repeatTimer = Timer.scheduledTimer(withTimeInterval: 0.12, repeats: true) { _ in action() }
+            self?.repeatTimer = Timer.onMainCommon(withTimeInterval: 0.12, repeats: true) { _ in action() }
         }
     }
 
@@ -176,5 +176,17 @@ final class ActionEngine {
         case (.media, .down): EventPoster.media(.volumeDown)
         case (.mouse, _): break
         }
+    }
+}
+
+extension Timer {
+    /// Like `scheduledTimer`, but also fires while a menu is open (event-tracking run loop mode),
+    /// so long presses and volume repeat keep working over SiriMouse's own menu.
+    @discardableResult
+    static func onMainCommon(withTimeInterval interval: TimeInterval, repeats: Bool,
+                             block: @escaping (Timer) -> Void) -> Timer {
+        let timer = Timer(timeInterval: interval, repeats: repeats, block: block)
+        RunLoop.main.add(timer, forMode: .common)
+        return timer
     }
 }

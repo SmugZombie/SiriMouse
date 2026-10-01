@@ -40,7 +40,7 @@ final class HIDRemote {
             guard let context else { return }
             Unmanaged<HIDRemote>.fromOpaque(context).takeUnretainedValue().deviceRemoved(device)
         }, context)
-        IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+        IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue)
 
         // The aggregate result fails if any unrelated Apple device refuses to open; the remote's
         // interfaces are opened individually below, so only a permission denial matters here.
@@ -52,7 +52,7 @@ final class HIDRemote {
         guard let manager else { return }
         for device in openDevices { close(device) }
         openDevices.removeAll()
-        IOHIDManagerUnscheduleFromRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+        IOHIDManagerUnscheduleFromRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue)
         IOHIDManagerClose(manager, IOOptionBits(kIOHIDOptionsTypeNone))
         self.manager = nil
     }
@@ -104,7 +104,7 @@ final class HIDRemote {
             guard let context else { return }
             Unmanaged<HIDRemote>.fromOpaque(context).takeUnretainedValue().handle(value)
         }, context)
-        IOHIDDeviceScheduleWithRunLoop(device, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+        IOHIDDeviceScheduleWithRunLoop(device, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue)
 
         let wasConnected = isConnected
         openDevices.append(device)
@@ -127,7 +127,7 @@ final class HIDRemote {
 
     private func close(_ device: IOHIDDevice) {
         IOHIDDeviceRegisterInputValueCallback(device, nil, nil)
-        IOHIDDeviceUnscheduleFromRunLoop(device, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+        IOHIDDeviceUnscheduleFromRunLoop(device, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue)
         IOHIDDeviceClose(device, IOOptionBits(kIOHIDOptionsTypeNone))
     }
 

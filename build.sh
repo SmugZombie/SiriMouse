@@ -16,7 +16,11 @@ cp Resources/Info.plist "$APP/Contents/Info.plist"
 
 # Sign with a stable identity when one exists: macOS ties Accessibility and Input Monitoring
 # grants to the signature, so ad-hoc signing means re-granting them after every rebuild.
-IDENTITY="${SIGN_IDENTITY:-$(security find-identity -v -p codesigning | awk -F'"' '/Apple Development|Developer ID Application/ {print $2; exit}')}"
+# Always prefer the same certificate: switching between Developer ID and Apple Development
+# changes the signature's designated requirement and revokes the grants.
+IDENTITIES="$(security find-identity -v -p codesigning)"
+IDENTITY="${SIGN_IDENTITY:-$(awk -F'"' '/Developer ID Application/ {print $2; exit}' <<< "$IDENTITIES")}"
+IDENTITY="${IDENTITY:-$(awk -F'"' '/Apple Development/ {print $2; exit}' <<< "$IDENTITIES")}"
 if [[ -n "$IDENTITY" ]]; then
   # Hardened runtime and a secure timestamp are required for notarization.
   codesign --force --options runtime --timestamp \

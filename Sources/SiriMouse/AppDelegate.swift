@@ -40,7 +40,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if !(Permissions.inputMonitoring && Permissions.accessibility) { watchPermissions() }
 
         // Retry the touch surface while connected but not attached (e.g. after the remote wakes).
-        touchRetryTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
+        touchRetryTimer = Timer.onMainCommon(withTimeInterval: 5, repeats: true) { [weak self] _ in
             guard let self, self.remote.isConnected, self.touch.attachedSurfaces == 0 else { return }
             self.attachTouch()
         }
@@ -67,7 +67,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func watchPermissions() {
         var hadInput = Permissions.inputMonitoring
         var hadAccessibility = Permissions.accessibility
-        permissionTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] timer in
+        permissionTimer = Timer.onMainCommon(withTimeInterval: 2, repeats: true) { [weak self] timer in
             guard let self else { return timer.invalidate() }
             if !hadInput, Permissions.inputMonitoring {
                 hadInput = true
