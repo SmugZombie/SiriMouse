@@ -12,6 +12,9 @@ import AppKit
 /// | TV                 | Next mode               | Next mode             | Next mode              |
 /// | Volume + / −       | Volume                  | Volume                | Volume                 |
 /// | Siri               | Siri / dictation        | Siri / dictation      | Siri / dictation       |
+///
+/// Keyboard mode shows an on-screen keyboard: slide to move the highlight, click to type it,
+/// Play/Pause deletes. Menu, TV, Volume and Siri work as in the other modes.
 final class ActionEngine {
     var onModeChange: ((Mode) -> Void)?
 
@@ -26,6 +29,8 @@ final class ActionEngine {
     private var lastClick: (time: TimeInterval, location: CGPoint, count: Int)?
     private var scrolling = false
     private var remainder = (x: 0.0, y: 0.0)
+    /// While the surface is clicked in Keyboard mode, finger movement does not move the highlight.
+    private var keyboardClickHeld = false
 
     init(touch: TouchSurface) {
         self.touch = touch
@@ -39,8 +44,14 @@ final class ActionEngine {
     func setMode(_ mode: Mode, announce: Bool = true) {
         releaseHeldMouse()
         Settings.shared.mode = mode
+        mode == .keyboard ? VirtualKeyboard.shared.show() : VirtualKeyboard.shared.hide()
         onModeChange?(mode)
         if announce { HUD.shared.show("\(mode.title) Mode", symbol: mode.symbol) }
+    }
+
+    /// The keyboard is only on screen while a remote can drive it.
+    func remoteConnectionChanged(_ connected: Bool) {
+        connected && mode == .keyboard ? VirtualKeyboard.shared.show() : VirtualKeyboard.shared.hide()
     }
 
     // MARK: - Buttons
@@ -61,6 +72,8 @@ final class ActionEngine {
         case .playPause:
             if mode == .mouse {
                 EventPoster.mouseButton(.right, down: pressed)
+            } else if mode == .keyboard {
+                repeating(pressed: pressed) { EventPoster.tap(.delete) }
             } else if pressed {
                 EventPoster.media(.playPause)
             }
@@ -98,6 +111,9 @@ final class ActionEngine {
             }
         case .media:
             if pressed { EventPoster.media(.playPause) }
+        case .keyboard:
+            keyboardClickHeld = pressed
+            if pressed { VirtualKeyboard.shared.pressSelected() }
         }
     }
 
@@ -141,9 +157,14 @@ final class ActionEngine {
         remainder = (0, 0)
         // In Mouse mode, a touch that starts on the right edge scrolls instead of moving.
         scrolling = mode == .mouse && point.x > 0.85 && !leftButtonDown
+        if mode == .keyboard { VirtualKeyboard.shared.touchBegan() }
     }
 
     private func touchMoved(dx: Double, dy: Double, dt: Double) {
+        if mode == .keyboard {
+            if !keyboardClickHeld { VirtualKeyboard.shared.touchMoved(dx: dx, dy: dy) }
+            return
+        }
         guard mode == .mouse else { return }
         if scrolling {
             let lines = dy * 2400 + remainder.y
@@ -174,7 +195,7 @@ final class ActionEngine {
         case (.media, .left): EventPoster.media(.previous)
         case (.media, .up): EventPoster.media(.volumeUp)
         case (.media, .down): EventPoster.media(.volumeDown)
-        case (.mouse, _): break
+        case (.mouse, _), (.keyboard, _): break
         }
     }
 }

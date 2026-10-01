@@ -41,19 +41,22 @@ grants survive rebuilds; with ad-hoc signing you have to grant them again after 
 Switch modes with the **TV** button (or hold **Menu**). The menu bar icon and an on-screen HUD
 show the current mode.
 
-| Input | Presenter | Mouse | Media |
-|---|---|---|---|
-| Click surface | Next slide (left third: previous) | Left click; hold and slide to drag | Play/Pause |
-| Swipe left / right | Previous / next slide | — | Previous / next track |
-| Swipe up / down | Up / down arrow | — | Volume |
-| Slide finger | — | Move pointer (right edge: scroll) | — |
-| Play/Pause | Play/Pause | Right click | Play/Pause |
-| Menu | Esc | Esc | Esc |
-| Volume +/− | Volume | Volume | Volume |
-| Siri | Open Siri, or hold to dictate | same | same |
+| Input | Presenter | Mouse | Media | Keyboard |
+|---|---|---|---|---|
+| Click surface | Next slide (left third: previous) | Left click; hold and slide to drag | Play/Pause | Type highlighted key |
+| Swipe left / right | Previous / next slide | — | Previous / next track | Move between keys |
+| Swipe up / down | Up / down arrow | — | Volume | Move between keys |
+| Slide finger | — | Move pointer (right edge: scroll) | — | Move between keys |
+| Play/Pause | Play/Pause | Right click | Play/Pause | Delete |
+| Menu | Esc | Esc | Esc | Esc |
+| Volume +/− | Volume | Volume | Volume | Volume |
+| Siri | Open Siri, or hold to dictate | same | same | same |
 
 Presenter mode sends arrow keys and Esc, which Keynote, PowerPoint, Google Slides and PDF viewers
 all understand.
+
+Keyboard mode shows an on-screen keyboard above the Dock. It types into the frontmost app without
+taking focus, and its keys can also be clicked with a mouse.
 
 ## Voice
 

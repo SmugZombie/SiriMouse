@@ -9,7 +9,7 @@ enum EventPoster {
 
     enum Key: CGKeyCode {
         case left = 123, right = 124, down = 125, up = 126
-        case escape = 53, space = 49, b = 11, returnKey = 36
+        case escape = 53, space = 49, b = 11, returnKey = 36, delete = 51, tab = 48
     }
 
     /// NX_KEYTYPE_* values from IOKit/hidsystem/ev_keymap.h.

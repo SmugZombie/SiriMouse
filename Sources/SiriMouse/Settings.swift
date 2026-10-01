@@ -1,13 +1,14 @@
 import Foundation
 
 enum Mode: String, CaseIterable {
-    case presenter, mouse, media
+    case presenter, mouse, media, keyboard
 
     var title: String {
         switch self {
         case .presenter: return "Presenter"
         case .mouse: return "Mouse"
         case .media: return "Media"
+        case .keyboard: return "Keyboard"
         }
     }
 
@@ -16,6 +17,7 @@ enum Mode: String, CaseIterable {
         case .presenter: return "play.rectangle"
         case .mouse: return "cursorarrow.rays"
         case .media: return "music.note"
+        case .keyboard: return "keyboard"
         }
     }
 

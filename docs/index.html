@@ -96,7 +96,7 @@
   h2 { font-size: clamp(28px, 4vw, 38px); letter-spacing: -0.015em; line-height: 1.15; margin: 0 0 10px; }
   .sub { color: var(--muted); margin: 0 0 32px; max-width: 680px; }
 
-  .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .modes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .card {
     background: var(--surface); border: 1px solid var(--line);
     border-radius: 18px; padding: 24px;
@@ -174,7 +174,7 @@
 <main>
   <section>
     <div class="wrap">
-      <h2>Three modes, one remote</h2>
+      <h2>Four modes, one remote</h2>
       <p class="sub">Press the <kbd>TV</kbd> button to switch modes. A short message on screen shows which mode you're in, and the menu bar icon changes to match.</p>
       <div class="modes">
         <div class="card">
@@ -207,6 +207,16 @@
             <li>Swipe up or down to change the volume</li>
           </ul>
         </div>
+        <div class="card">
+          <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M10 13h.01M14 13h.01M18 13h.01M8 16h8"/></svg></div>
+          <h3>Keyboard</h3>
+          <p>An on-screen keyboard for search boxes, passwords and quick replies.</p>
+          <ul>
+            <li>Slide your finger to move between keys</li>
+            <li>Click to type the highlighted key</li>
+            <li><kbd>Play/Pause</kbd> deletes; hold <kbd>Siri</kbd> to dictate instead</li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
@@ -234,16 +244,16 @@
       <p class="sub">The Menu, TV, volume and Siri buttons do the same thing in every mode.</p>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Remote</th><th>Presenter</th><th>Mouse</th><th>Media</th></tr></thead>
+          <thead><tr><th>Remote</th><th>Presenter</th><th>Mouse</th><th>Media</th><th>Keyboard</th></tr></thead>
           <tbody>
-            <tr><td>Click touch surface</td><td>Next slide (left third: previous)</td><td>Left click, or hold to drag</td><td>Play / pause</td></tr>
-            <tr><td>Swipe left / right</td><td>Previous / next slide</td><td>Moves the pointer</td><td>Previous / next track</td></tr>
-            <tr><td>Swipe up / down</td><td>Up / down arrow key</td><td>Moves the pointer (right edge scrolls)</td><td>Volume up / down</td></tr>
-            <tr><td>Play/Pause</td><td>Play / pause</td><td>Right click</td><td>Play / pause</td></tr>
-            <tr><td>Menu</td><td colspan="3">Esc, or hold to switch mode</td></tr>
-            <tr><td>TV</td><td colspan="3">Switch mode</td></tr>
-            <tr><td>Volume + / −</td><td colspan="3">System volume</td></tr>
-            <tr><td>Siri</td><td colspan="3">Open Siri, or hold to dictate</td></tr>
+            <tr><td>Click touch surface</td><td>Next slide (left third: previous)</td><td>Left click, or hold to drag</td><td>Play / pause</td><td>Type the highlighted key</td></tr>
+            <tr><td>Swipe left / right</td><td>Previous / next slide</td><td>Moves the pointer</td><td>Previous / next track</td><td>Move between keys</td></tr>
+            <tr><td>Swipe up / down</td><td>Up / down arrow key</td><td>Moves the pointer (right edge scrolls)</td><td>Volume up / down</td><td>Move between keys</td></tr>
+            <tr><td>Play/Pause</td><td>Play / pause</td><td>Right click</td><td>Play / pause</td><td>Delete</td></tr>
+            <tr><td>Menu</td><td colspan="4">Esc, or hold to switch mode</td></tr>
+            <tr><td>TV</td><td colspan="4">Switch mode</td></tr>
+            <tr><td>Volume + / −</td><td colspan="4">System volume</td></tr>
+            <tr><td>Siri</td><td colspan="4">Open Siri, or hold to dictate</td></tr>
           </tbody>
         </table>
       </div>

@@ -25,6 +25,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         remote.onConnectionChange = { [weak self] connected, name in
             guard let self else { return }
             self.updateIcon()
+            self.engine.remoteConnectionChanged(connected)
             if connected {
                 HUD.shared.show("\(name ?? "Siri Remote") connected", symbol: "appletvremote.gen1")
                 // The touch surface registers with MultitouchSupport a moment after the HID interfaces.
@@ -267,6 +268,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
           Click or Play/Pause — play/pause
           Swipe left/right — previous/next track
           Swipe up/down — volume
+
+        Keyboard Mode
+          Slide finger — move the highlighted key
+          Click — type the highlighted key
+          Play/Pause — delete
         """
         NSApp.activate(ignoringOtherApps: true)
         alert.runModal()
