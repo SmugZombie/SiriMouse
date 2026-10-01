@@ -7,6 +7,9 @@ surface) into a presenter clicker, a media remote and a mouse.
 
 ## Download
 
+Website: **https://smugzombie.github.io/SiriMouse/**
+
+
 Grab `SiriMouse-x.y.z.zip` from [Releases](https://github.com/SmugZombie/SiriMouse/releases),
 unzip it and move **SiriMouse.app** to /Applications. Releases are signed and notarized.
 

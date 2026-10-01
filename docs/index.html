@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SiriMouse</title>
+<meta name="description" content="A free Mac menu bar app that turns a 1st-generation Apple TV Siri Remote into a presentation clicker, a mouse and a media remote.">
+<meta property="og:title" content="SiriMouse">
+<meta property="og:description" content="Turn your old Siri Remote into a presentation clicker, mouse and media remote for your Mac.">
+<meta property="og:image" content="https://smugzombie.github.io/SiriMouse/icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<style>
+  :root {
+    --bg: #f5f5f7;
+    --surface: #ffffff;
+    --text: #1d1d1f;
+    --muted: #6e6e73;
+    --line: #e3e3e8;
+    --accent: #0a66d8;
+    --accent-text: #ffffff;
+    --chip: #f0f0f3;
+    --hero-glow: rgba(10, 102, 216, 0.10);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f0f11;
+      --surface: #1a1a1d;
+      --text: #f5f5f7;
+      --muted: #a1a1a6;
+      --line: #2c2c31;
+      --accent: #3d8bfd;
+      --accent-text: #ffffff;
+      --chip: #242428;
+      --hero-glow: rgba(61, 139, 253, 0.14);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f0f11;
+    --surface: #1a1a1d;
+    --text: #f5f5f7;
+    --muted: #a1a1a6;
+    --line: #2c2c31;
+    --accent: #3d8bfd;
+    --accent-text: #ffffff;
+    --chip: #242428;
+    --hero-glow: rgba(61, 139, 253, 0.14);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+
+  /* Hero */
+  header.hero {
+    text-align: center;
+    padding: 72px 0 56px;
+    background: radial-gradient(ellipse 60% 55% at 50% 30%, var(--hero-glow), transparent 70%);
+  }
+  .hero img { width: 168px; height: 168px; }
+  .hero h1 {
+    font-size: clamp(40px, 7vw, 64px);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin: 18px 0 12px;
+  }
+  .hero p.lede {
+    font-size: clamp(19px, 2.6vw, 23px);
+    color: var(--muted);
+    max-width: 640px;
+    margin: 0 auto 32px;
+  }
+  .download {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--accent); color: var(--accent-text);
+    text-decoration: none; font-weight: 600; font-size: 18px;
+    padding: 14px 28px; border-radius: 980px;
+    transition: filter .15s ease, transform .15s ease;
+  }
+  .download:hover { filter: brightness(1.08); }
+  .download:active { transform: scale(0.98); }
+  .download svg { width: 20px; height: 20px; }
+  .meta { color: var(--muted); font-size: 14px; margin-top: 14px; }
+  .meta a { color: var(--muted); }
+
+  /* Sections */
+  section { padding: 56px 0; border-top: 1px solid var(--line); }
+  h2 { font-size: clamp(28px, 4vw, 38px); letter-spacing: -0.015em; line-height: 1.15; margin: 0 0 10px; }
+  .sub { color: var(--muted); margin: 0 0 32px; max-width: 680px; }
+
+  .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 18px; padding: 24px;
+  }
+  .card .glyph {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: grid; place-items: center;
+    background: var(--chip); color: var(--accent); margin-bottom: 14px;
+  }
+  .card .glyph svg { width: 24px; height: 24px; }
+  .card h3 { margin: 0 0 6px; font-size: 21px; }
+  .card p { margin: 0 0 12px; color: var(--muted); }
+  .card ul { margin: 0; padding-left: 18px; }
+  .card li { margin: 4px 0; }
+
+  .table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 620px; }
+  th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }
+  tr:last-child td { border-bottom: 0; }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+
+  .steps { counter-reset: step; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 0; margin: 0; list-style: none; }
+  .steps li { counter-increment: step; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 24px; }
+  .steps li::before {
+    content: counter(step);
+    display: grid; place-items: center;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--accent); color: var(--accent-text);
+    font-weight: 700; font-size: 15px; margin-bottom: 12px;
+  }
+  .steps h3 { margin: 0 0 6px; font-size: 19px; }
+  .steps p { margin: 0; color: var(--muted); }
+  kbd {
+    font: 600 14px/1 -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--chip); border: 1px solid var(--line); border-bottom-width: 2px;
+    border-radius: 6px; padding: 2px 7px; color: var(--text);
+  }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .faq dt { font-weight: 600; margin-top: 18px; }
+  .faq dt:first-child { margin-top: 0; }
+  .faq dd { margin: 4px 0 0; color: var(--muted); }
+
+  footer { border-top: 1px solid var(--line); padding: 32px 0 48px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+  footer a { color: var(--muted); }
+
+  @media (max-width: 800px) {
+    .modes, .steps, .two { grid-template-columns: 1fr; }
+    header.hero { padding: 48px 0 40px; }
+    .hero img { width: 128px; height: 128px; }
+    section { padding: 44px 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <img src="icon.png" alt="SiriMouse app icon" width="168" height="168">
+    <h1>SiriMouse</h1>
+    <p class="lede">Turn your old Apple TV Siri Remote into a presentation clicker, a mouse and a media remote for your Mac.</p>
+    <a class="download" id="download" href="https://github.com/SmugZombie/SiriMouse/releases/latest">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+      <span id="download-label">Download for Mac</span>
+    </a>
+    <div class="meta">
+      <span id="version">Latest release</span> · Free · macOS 13 or later · Apple silicon · Notarized by Apple
+      <br><a href="https://github.com/SmugZombie/SiriMouse/releases">All releases</a> · <a href="https://github.com/SmugZombie/SiriMouse">Source on GitHub</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <h2>Three modes, one remote</h2>
+      <p class="sub">Press the <kbd>TV</kbd> button to switch modes. A short message on screen shows which mode you're in, and the menu bar icon changes to match.</p>
+      <div class="modes">
+        <div class="card">
+          <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="m10 8.5 4 2-4 2z" fill="currentColor"/><path d="M8 21h8"/></svg></div>
+          <h3>Presenter</h3>
+          <p>Run Keynote, PowerPoint, Google Slides or a PDF from across the room.</p>
+          <ul>
+            <li>Click or swipe right for the next slide</li>
+            <li>Swipe left, or click the left edge, to go back</li>
+            <li><kbd>Menu</kbd> exits the slideshow</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="glyph"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3.5 18.5 12l-6 1.4 3.4 6.3-2.3 1.2-3.4-6.3L5 19z"/></svg></div>
+          <h3>Mouse</h3>
+          <p>The glass touch surface works like a small trackpad.</p>
+          <ul>
+            <li>Slide your finger to move the pointer</li>
+            <li>Click to click; hold the click and slide to drag</li>
+            <li><kbd>Play/Pause</kbd> right-clicks; slide on the right edge to scroll</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+          <h3>Media</h3>
+          <p>Control Music, Spotify, podcasts or a video from the couch.</p>
+          <ul>
+            <li>Click to play or pause</li>
+            <li>Swipe left or right to change track</li>
+            <li>Swipe up or down to change the volume</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Siri button</h2>
+      <p class="sub">Choose what the Siri button does from the menu bar. Both options listen through your Mac's microphone, or whichever input you've picked in Sound settings, such as AirPods.</p>
+      <div class="two">
+        <div class="card">
+          <h3>Open Siri</h3>
+          <p>Press the Siri button to start Siri on your Mac, just like clicking its icon.</p>
+        </div>
+        <div class="card">
+          <h3>Dictate text</h3>
+          <p>Hold the Siri button and speak, then let go. What you said is typed into the app you're using. Recognition runs on your Mac when it can.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Every button, every mode</h2>
+      <p class="sub">The Menu, TV, volume and Siri buttons do the same thing in every mode.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Remote</th><th>Presenter</th><th>Mouse</th><th>Media</th></tr></thead>
+          <tbody>
+            <tr><td>Click touch surface</td><td>Next slide (left third: previous)</td><td>Left click, or hold to drag</td><td>Play / pause</td></tr>
+            <tr><td>Swipe left / right</td><td>Previous / next slide</td><td>Moves the pointer</td><td>Previous / next track</td></tr>
+            <tr><td>Swipe up / down</td><td>Up / down arrow key</td><td>Moves the pointer (right edge scrolls)</td><td>Volume up / down</td></tr>
+            <tr><td>Play/Pause</td><td>Play / pause</td><td>Right click</td><td>Play / pause</td></tr>
+            <tr><td>Menu</td><td colspan="3">Esc, or hold to switch mode</td></tr>
+            <tr><td>TV</td><td colspan="3">Switch mode</td></tr>
+            <tr><td>Volume + / −</td><td colspan="3">System volume</td></tr>
+            <tr><td>Siri</td><td colspan="3">Open Siri, or hold to dictate</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Get started</h2>
+      <p class="sub">Install the app, pair the remote, then allow access.</p>
+      <ol class="steps">
+        <li>
+          <h3>Install</h3>
+          <p>Download the zip, unzip it, move <strong>SiriMouse</strong> to your Applications folder and open it. It appears in the menu bar, not the Dock.</p>
+        </li>
+        <li>
+          <h3>Pair the remote</h3>
+          <p>Unpair it from your Apple TV first. Then open <strong>System Settings → Bluetooth</strong>, hold <kbd>Menu</kbd> + <kbd>Volume&nbsp;Up</kbd> for about 5 seconds near your Mac, and click <strong>Connect</strong>.</p>
+        </li>
+        <li>
+          <h3>Allow access</h3>
+          <p>In <strong>System Settings → Privacy &amp; Security</strong>, turn on SiriMouse under <strong>Input Monitoring</strong> (to read the remote) and <strong>Accessibility</strong> (to press keys and move the pointer).</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Questions</h2>
+      <dl class="faq">
+        <dt>Which remote does it work with?</dt>
+        <dd>The 1st-generation Siri Remote (2015), the thin one with the black glass touch surface.</dd>
+        <dt>Does it use the remote's microphone?</dt>
+        <dd>No. macOS doesn't let apps use the remote's microphone, so SiriMouse uses your Mac's microphone instead. If you present far from your laptop, choose AirPods or a wireless mic as the input in Sound settings.</dd>
+        <dt>Does it send any data anywhere?</dt>
+        <dd>No. SiriMouse doesn't connect to the internet. Everything runs on your Mac.</dd>
+        <dt>Can I start it automatically?</dt>
+        <dd>Yes. Turn on <strong>Launch at Login</strong> in the SiriMouse menu.</dd>
+        <dt>Something isn't working</dt>
+        <dd>Choose <strong>Open Log</strong> from the SiriMouse menu and <a href="https://github.com/SmugZombie/SiriMouse/issues">open an issue</a> with what you see. The touch surface relies on a part of macOS that Apple could change in a future update; if that happens, the buttons keep working.</dd>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>SiriMouse is a personal project. It isn't affiliated with Apple.</span>
+    <span><a href="https://github.com/SmugZombie/SiriMouse">GitHub</a> · <a href="https://github.com/SmugZombie/SiriMouse/releases">Releases</a> · <a href="https://github.com/SmugZombie/SiriMouse/issues">Report a problem</a></span>
+  </div>
+</footer>
+
+<script>
+  // Point the button straight at the newest zip. Without this (offline, rate limited),
+  // it still links to the latest release page.
+  fetch("https://api.github.com/repos/SmugZombie/SiriMouse/releases/latest")
+    .then(function (response) { return response.ok ? response.json() : Promise.reject(response.status); })
+    .then(function (release) {
+      var zip = (release.assets || []).find(function (asset) { return /\.zip$/i.test(asset.name); });
+      var version = (release.tag_name || "").replace(/^v/, "");
+      if (zip) document.getElementById("download").href = zip.browser_download_url;
+      if (version) {
+        document.getElementById("download-label").textContent = "Download SiriMouse " + version;
+        document.getElementById("version").textContent = "Version " + version;
+      }
+    })
+    .catch(function () {});
+</script>
+</body>
+</html>
