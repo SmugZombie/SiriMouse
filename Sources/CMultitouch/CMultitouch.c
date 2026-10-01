@@ -10,6 +10,7 @@
 #include <dlfcn.h>
 #include <math.h>
 #include <stdatomic.h>
+#include <stdbool.h>
 #include <stddef.h>
 
 typedef struct { float x, y; } SMPoint;
@@ -28,7 +29,9 @@ static void *framework;
 static CFArrayRef (*createList)(void);
 static int (*deviceStart)(void *, int);
 static void (*deviceStop)(void *);
-static int (*isBuiltIn)(void *);
+// Returns a one-byte bool: on x86_64 the rest of the return register is garbage, so it must
+// not be declared as int.
+static bool (*isBuiltIn)(void *);
 static void (*sensorDimensions)(void *, int *, int *);
 static void (*surfaceDimensions)(void *, int *, int *);
 static int (*familyID)(void *, int *);

@@ -5,8 +5,10 @@
 set -euo pipefail
 cd "${0:A:h}"
 
-swift build -c release
-BIN="$(swift build -c release --show-bin-path)/SiriMouse"
+# Universal binary: runs natively on Apple silicon and Intel Macs.
+ARCHS=(--arch arm64 --arch x86_64)
+swift build -c release "${ARCHS[@]}"
+BIN="$(swift build -c release "${ARCHS[@]}" --show-bin-path)/SiriMouse"
 
 APP="build/SiriMouse.app"
 rm -rf "$APP"
