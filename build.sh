@@ -13,6 +13,7 @@ rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN" "$APP/Contents/MacOS/SiriMouse"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
+cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 
 # Sign with a stable identity when one exists: macOS ties Accessibility and Input Monitoring
 # grants to the signature, so ad-hoc signing means re-granting them after every rebuild.

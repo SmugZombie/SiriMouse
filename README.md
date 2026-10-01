@@ -1,3 +1,5 @@
+<p align="center"><img src="Assets/AppIcon-1024.png" width="160" alt="SiriMouse icon"></p>
+
 # SiriMouse
 
 A native macOS menu bar app that turns a **1st-generation Siri Remote** (2015, black glass touch
