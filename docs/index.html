@@ -313,7 +313,10 @@
   fetch("https://api.github.com/repos/SmugZombie/SiriMouse/releases/latest")
     .then(function (response) { return response.ok ? response.json() : Promise.reject(response.status); })
     .then(function (release) {
-      var zip = (release.assets || []).find(function (asset) { return /\.zip$/i.test(asset.name); });
+      // The universal zip runs on every Mac; skip the Apple silicon-only one.
+      var zip = (release.assets || []).find(function (asset) {
+        return /\.zip$/i.test(asset.name) && !/-arm64\.zip$/i.test(asset.name);
+      });
       var version = (release.tag_name || "").replace(/^v/, "");
       if (zip) document.getElementById("download").href = zip.browser_download_url;
       if (version) {

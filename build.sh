@@ -1,5 +1,6 @@
 #!/bin/zsh
-# Builds SiriMouse.app into ./build. Usage: ./build.sh [--install] [--run]
+# Builds SiriMouse.app into ./build. Usage: ./build.sh [--arm64] [--install] [--run]
+#   --arm64    Apple silicon only (default is a universal arm64 + x86_64 binary)
 #   --install  copy the app to /Applications (needed for Launch at Login)
 #   --run      launch it after building
 set -euo pipefail
@@ -7,6 +8,7 @@ cd "${0:A:h}"
 
 # Universal binary: runs natively on Apple silicon and Intel Macs.
 ARCHS=(--arch arm64 --arch x86_64)
+[[ " $* " == *" --arm64 "* ]] && ARCHS=(--arch arm64)
 swift build -c release "${ARCHS[@]}"
 BIN="$(swift build -c release "${ARCHS[@]}" --show-bin-path)/SiriMouse"
 

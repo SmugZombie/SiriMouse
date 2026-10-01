@@ -11,8 +11,8 @@ Website: **https://smugzombie.github.io/SiriMouse/**
 
 
 Grab `SiriMouse-x.y.z.zip` from [Releases](https://github.com/SmugZombie/SiriMouse/releases),
-unzip it and move **SiriMouse.app** to /Applications. Releases are universal (Apple silicon and Intel),
-signed and notarized.
+unzip it and move **SiriMouse.app** to /Applications. It is a universal app (Apple silicon and Intel);
+`SiriMouse-x.y.z-arm64.zip` is a smaller Apple silicon-only build. Releases are signed and notarized.
 
 ## Pair the remote with your Mac
 
@@ -27,6 +27,7 @@ Requires macOS 13+ and the Xcode command line tools (`swift`).
 
 ```sh
 ./build.sh --run            # build into ./build and launch
+./build.sh --arm64          # Apple silicon only (default: universal)
 ./build.sh --install --run  # copy to /Applications first (needed for Launch at Login)
 ./release.sh 1.0.0          # notarize and publish a GitHub release (needs a Developer ID
                             # certificate and `xcrun notarytool store-credentials notary`)
